@@ -11,6 +11,14 @@
             "options": {
                 "cwd": "${fileDirname}"
             }
-        }
+        },
+        {
+            "label": "Kotlin Run",
+            "type": "shell",
+            "command": "kotlinc ${file} -include-runtime -d out.jar;echo 'COMPILED'; java -jar out.jar; rm out.jar",
+            "options": {
+                "cwd": "${fileDirname}"
+            }
+        },
     ]
 }
