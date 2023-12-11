@@ -18,8 +18,8 @@ fun main() {
     val inputStrings = inputString.split("\n")
     val yMax = inputStrings.count()
     val xMax = inputStrings[0].count()
-    var network: Array<Array<Node>> = Array (inputStrings.count()) { 
-        Array (inputStrings[0].count()) {
+    var network: Array<Array<Node>> = Array (yMax) { 
+        Array (xMax) {
             Node()
         }
     }
@@ -93,16 +93,78 @@ fun main() {
     // Prepare data structure
     // Now we need to:
     // compute which side is in and which is out
+
+    val leftMostStep = solution.minBy { it.x}
+    val indexLeftMostStep = solution.indexOf(leftMostStep)
+    val successiveStep = solution[indexLeftMostStep + 1]
+    println(successiveStep)
+    println(leftMostStep)
+    // these two should be a t the same X position and only change on Y, as
+    val diff = Pair(successiveStep.x - leftMostStep.x, successiveStep.y - leftMostStep.y)
+    println(diff)
+
+    enum class Side{LEFT, RIGHT}
+    if (diff.second > 0){
+        // Then we go down so the inside is left
+        val insideSide = Side.LEFT
+    } else if (diff.second < 0 ) {
+        // Then we go up so the inside is right
+        val insideSide = Side.RIGHT
+    } else {println("UNEXPECTED")}
+
+
+    var insideBorder: Array<Pair<Int, Int>> = Array (solution.count()){
+        Pair(0, 0)
+    }
+
+    insideBorder = computeInside(solution, insideSide)
+
     // create a 2D matrix to keep track of visited and not counted points
+    var insideMatrix: Array<Array<Int>> = Array() (yMax) { 
+        Array (xMax) {
+            0
+        }
+    }
+    // Easier access to border points
+    var solutionMatrix: Array<Array<Int>> = Array() (yMax) { 
+        Array (xMax) {
+            0
+        }
+    }
+    for (step:Node in solution){
+        solutionMatrix[step.y][step.x] = 1
+    }
+
     // follow the loop and run a BFs on each of the inside nodes
+    for (step: Node in solution){
+        val leftNode = getLeftNode(step)
+        BFS(leftNode, visitedMatrix, solutionMatrix)
+    }
     // using the matrix to keep track of which ones are inside
+
+
     // when we're done we just sum the inside marrtix and return
-
+    return visitedMatrix.sum()
     // just need to actuallly do it lmao
-    
-
 
 }
+
+fun computeInside(solution: Array<Node>, insideSide: Side): Array<Pair<Int, Int>> {
+    for (step:Node in solution){
+        val indexStep = solution.indexOf(step)
+        val successiveStep = solution[(indexStep + 1 ) % solution.count()]
+        println(successiveStep)
+        println(leftMostStep)
+        // these two should be a t the same X position and only change on Y, as
+        val diff = Pair(successiveStep.x - leftMostStep.x, successiveStep.y - leftMostStep.y)
+        // compute what is inside 
+        
+
+    }    
+    
+} 
+
+fun BFS(currNode: Node, visitedMatrix: Array<Array<Int>>){}
 
 fun updatePos(currNode: Node, prevNode: Node, network: Array<Array<Node>>): Node{
     //println("CURR: ${currNode}")
